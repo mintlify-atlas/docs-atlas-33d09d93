@@ -1,0 +1,88 @@
+---
+title: "Spacing and layout: 4pt grid with editorial margins"
+description: "Kami's 4pt-base spacing scale, A4 page margins per document type, break-inside pagination patterns, and the border-radius scale from 4pt to 32pt."
+---
+
+Kami's spacing system starts from a single base unit: **4 pt** (4 px on screen). Every spacing value in every template is a multiple or near-multiple of this unit. This creates the consistent editorial rhythm that makes Kami documents feel measured and intentional rather than arbitrarily padded. Margins scale with formality — a dense resume packs content into 11 mm top and bottom margins; a formal letter breathes at 25 mm on all sides.
+
+## Spacing scale
+
+| Tier | Value | Use |
+|---|---|---|
+| xs | 2–3 pt | Inline adjacent elements |
+| sm | 4–5 pt | Tag padding, dense layout |
+| md | 8–10 pt | Component interior |
+| lg | 16–20 pt | Between components / card padding |
+| xl | 24–32 pt | Section-title margins |
+| 2xl | 40–60 pt | Between major sections |
+| 3xl | 80–120 pt | Between chapters (long docs) |
+
+## Page margins (A4)
+
+Margins are set per document type. The rule: denser formats use smaller margins to fit more content; more formal formats use larger margins to project authority and readability.
+
+| Document type | Top | Right | Bottom | Left |
+|---|---|---|---|---|
+| Resume (dense) | 11 mm | 13 mm | 11 mm | 13 mm |
+| One-Pager | 15 mm | 18 mm | 15 mm | 18 mm |
+| Long Doc | 20 mm | 22 mm | 22 mm | 22 mm |
+| Letter | 25 mm | 25 mm | 25 mm | 25 mm |
+| Portfolio | 12 mm | 15 mm | 12 mm | 15 mm |
+
+These values are set in the `@page` rule in each template's stylesheet. Do not override them with inline styles.
+
+## Print and pagination
+
+WeasyPrint respects CSS print properties. Two patterns appear in every Kami template.
+
+### break-inside protection
+
+Certain elements must never be split across pages. Apply `break-inside: avoid` to any block that would be confusing or visually broken if split:
+
+```css
+.card, .metric, .project-item, .quote, .code-block, figure, .callout {
+  break-inside: avoid;
+}
+```
+
+<Note>
+  `break-inside: avoid` does not work on flex children without a block wrapper. If your element is a direct flex child, wrap it in a `<div>` before applying this rule. See the troubleshooting guide for details.
+</Note>
+
+### Force page break
+
+Insert a forced page break before a section using:
+
+```css
+.page-break { break-before: page; }
+```
+
+Add `class="page-break"` to the element that should begin on a new page.
+
+### Page background past margins
+
+Without an explicit `@page` background, WeasyPrint leaves white edges where margins are. Set the background on `@page` so parchment extends into the margin area:
+
+```css
+@page {
+  size: A4;
+  margin: 20mm 22mm;
+  background: #f5f4ed;   /* extends past margin area, prevents printed white edges */
+}
+```
+
+Adjust the margin values per document type from the table above. The `background` value is always `#f5f4ed` (parchment) — never pure white.
+
+## Radius scale
+
+Border radius follows a fixed scale. Use the closest step — do not use arbitrary values.
+
+`4 pt → 6 pt → 8 pt (default) → 12 pt → 16 pt → 24 pt → 32 pt (hero containers)`
+
+- **4 pt**: small chips, inline tags
+- **6 pt**: code blocks
+- **8 pt**: default — standard cards, buttons
+- **12 pt**: prominent cards
+- **16 pt**: featured cards (`.card-featured`)
+- **24 pt**: section containers
+- **32 pt**: hero containers, cover elements

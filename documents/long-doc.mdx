@@ -1,0 +1,86 @@
+---
+title: "Long doc template: white papers and technical reports"
+description: "Multi-chapter format for white papers and technical reports. Cover-to-appendix structure with claim paragraphs, callout relief, and dark section alternation."
+---
+
+The long-doc template in Kami covers any document that needs more than one page of sustained argument: white papers, annual reviews, technical reports, and research summaries. Unlike the one-pager's 30-second scan contract, long-doc assumes a reader who will sit with the document. Each chapter stands alone as an essay; the executive summary up front lets a skimmer exit early with the conclusions.
+
+## Templates
+
+| Language | Template file |
+|---|---|
+| Chinese | `assets/templates/long-doc.html` |
+| English | `assets/templates/long-doc-en.html` |
+
+## Document structure
+
+Long-doc follows a five-part spine:
+
+1. **Cover** — display headline + subtitle + author + date, heavy whitespace
+2. **Contents** — table of contents (auto-generated or hand-written)
+3. **Executive summary** — one page maximum, 3–5 numbered takeaways
+4. **Body** — chapters, each opening with a claim paragraph
+5. **Appendix / references** — supporting data, citations (if applicable)
+
+## Chapter writing rules
+
+Every chapter must follow these rules from the writing spec:
+
+- Open each chapter with a **claim paragraph** (2–3 sentences summarizing the argument before any evidence)
+- After any paragraph longer than five lines, insert a **callout, quote, or figure** to relieve eye fatigue
+- Highlight key data and conclusions with `<span class="hl">` — not bold
+- Separate major sections with **chapter breaks** (blank page + chapter number)
+
+<Note>
+  Claim paragraphs are the structural backbone of long-doc. A reader who reads only the first sentence of each chapter should leave with the full argument. If the first sentence of a chapter is setup rather than claim, rewrite it.
+</Note>
+
+## Dark section alternation
+
+Long-doc supports a light/dark rhythm for section-level contrast. Add `.sd-alt` to any section container to switch that section to the dark surface:
+
+```html
+<section class="sd-alt">
+  <!-- Background becomes #141413, body text becomes #b0aea5, headings become #faf9f5 -->
+</section>
+```
+
+Use dark sections for executive summaries, chapter intros, or pull-quote breaks. Restrict to showcase-style sections — never use `.sd-alt` inside a reading chapter.
+
+## Diagram integration
+
+Three built-in SVG diagram types can be embedded inside long-doc chapters. Extract the `<svg>` block from the diagram template and drop it into a `<figure>` in your document:
+
+| Diagram type | Source file | Use case |
+|---|---|---|
+| Architecture | `assets/diagrams/architecture.html` | System components and connections |
+| Flowchart | `assets/diagrams/flowchart.html` | Decision branches and sequential flows |
+| Quadrant | `assets/diagrams/quadrant.html` | 2×2 positioning or priority matrices |
+
+<Tip>
+  Before drawing any diagram, ask: would a well-written paragraph teach the reader less than this diagram? If no, write the paragraph instead. Diagrams earn their space only when a visual relationship cannot be compressed into prose.
+</Tip>
+
+## Build command
+
+```bash
+python3 scripts/build.py long-doc-en
+```
+
+For the Chinese template:
+
+```bash
+python3 scripts/build.py long-doc
+```
+
+Long-doc has no hard page limit enforced by the build script (`max_pages = 0`). The expected range is **7 ± 2 pages**. If the document runs significantly outside that range, review chapter structure and executive summary length.
+
+## Page margins
+
+Long-doc margins are `20mm · 22mm · 22mm · 22mm` (T · R · B · L) — the most generous of the six templates, matching the slower reading pace expected for this format.
+
+## Related
+
+- [One-pager](/documents/one-pager) — when the argument fits in one page
+- [Portfolio](/documents/portfolio) — when the document is primarily visual case studies
+- [Slides](/documents/slides) — when the audience will hear, not read

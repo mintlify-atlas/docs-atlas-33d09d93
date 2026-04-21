@@ -1,0 +1,93 @@
+---
+title: "Color system: parchment canvas and ink-blue accent"
+description: "Kami's color palette — parchment, ink-blue, warm neutrals, and the rgba-to-solid conversion table for correct WeasyPrint rendering."
+---
+
+Kami's color system is built on a single constraint: **one chromatic color, warm neutrals everywhere else**. Ink-blue `#1B365D` is the only hue that departs from the warm gray family. It appears on CTAs, section-title left bars, tag text, and link colors — and it covers no more than 5% of the document surface. Everything else — backgrounds, text, borders — is a warm neutral with a yellow-brown undertone. This restraint is what makes ink-blue land with authority whenever it appears.
+
+<Note>
+  Every gray in the Kami palette has a **yellow-brown undertone**. The mnemonic: in `rgb()`, warm gray is R ≈ G > B (or R > G > B with small gaps). Cool gray (R = G = B, or R &lt; G) is forbidden.
+</Note>
+
+## Brand colors
+
+The only chromatic colors in the system. Use ink-blue for all accent work; use brand-light only on dark surfaces where the full `#1B365D` would be too dark to read as a link.
+
+```css
+--brand:       #1B365D;   /* Ink Blue — the only chromatic color. CTAs, accents, section-title left bar. */
+--brand-light: #2D5A8A;   /* Brighter variant — for links on dark surfaces. */
+```
+
+**Rule**: ink-blue covers ≤ 5% of document surface area. More than that is ornament, not restraint.
+
+## Surface colors
+
+These form the layered background system. Parchment is the page; ivory lifts containers off the page; warm-sand is the interactive surface. Dark-surface and deep-dark exist for `.sd-alt` sections in long docs and portfolios.
+
+```css
+--parchment:    #f5f4ed;   /* Page background — warm cream, the emotional foundation */
+--ivory:        #faf9f5;   /* Card / lifted container — brighter than parchment */
+--warm-sand:    #e8e6dc;   /* Button default / interactive surface */
+--dark-surface: #30302e;   /* Dark-theme container — warm charcoal */
+--deep-dark:    #141413;   /* Dark-theme page background — not pure black, slight olive undertone */
+```
+
+**Never**: `#ffffff` pure white as page background. `#f8f9fa`, `#f3f4f6`, or any cool-gray surface.
+
+## Text colors
+
+Six stops from near-black to warm silver. Each step is a warm neutral — none of them are cool grays. Use them in order of information hierarchy.
+
+```css
+--near-black:  #141413;   /* Primary text — deepest but not pure black, warm olive undertone */
+--dark-warm:   #3d3d3a;   /* Secondary dark / dark link color */
+--charcoal:    #4d4c48;   /* Button text / dense body */
+--olive:       #5e5d59;   /* Subtext — descriptions, captions */
+--stone:       #87867f;   /* Tertiary — dates, metadata */
+--warm-silver: #b0aea5;   /* Light text on dark surfaces */
+```
+
+## Border and ring colors
+
+Borders are subtle. The softest (`--border-cream`) is the default for cards. Rings are used exclusively for button hover and focus states — they simulate a pressed-in border without hard shadows.
+
+```css
+/* Borders */
+--border-cream: #e8e5da;   /* Softest border — default cards */
+--border-warm:  #e0ddd2;   /* Prominent border — section dividers */
+--border-soft:  #e5e3d8;   /* Dotted divider — between list items */
+--border-dark:  #30302e;   /* Border on dark surfaces */
+
+/* Ring shadows */
+--ring-warm: #d1cfc5;   /* Button hover / focus */
+--ring-deep: #c2c0b6;   /* Pressed state */
+```
+
+## Functional colors
+
+These two colors exist for system states only — never for decoration.
+
+```css
+--error: #b53333;   /* Deep warm red — serious without alarming */
+--focus: #3898ec;   /* Focus ring blue — the only cool color, strictly for accessibility */
+```
+
+`--focus` is the single exception to the no-cool-tones rule. It exists only for keyboard focus rings and must not appear in any other context.
+
+## rgba to solid conversion
+
+WeasyPrint's alpha compositing for padding vs glyph areas produces a visible double rectangle at zoom when `rgba()` is used for backgrounds. All tag and surface backgrounds must use solid hex values.
+
+The table below gives the pre-computed solid equivalents of ink-blue `#1B365D` composited over parchment `#f5f4ed` at each alpha level.
+
+| rgba alpha | Solid hex |
+|---|---|
+| 0.08 | `#EEF2F7` |
+| 0.14 | `#E4ECF5` |
+| **0.18** | **`#E4ECF5`** ← default tag |
+| 0.22 | `#D0DCE9` |
+| 0.30 | `#D6E1EE` |
+
+<Warning>
+  Never use `rgba()` for tag or surface backgrounds in any template. WeasyPrint renders a double rectangle when alpha compositing is applied to padding vs glyph areas. Use the solid hex equivalents from the table above. Example of the forbidden pattern: `background: rgba(27, 54, 93, 0.18)`.
+</Warning>

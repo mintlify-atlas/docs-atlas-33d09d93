@@ -1,0 +1,60 @@
+---
+title: "Design system overview: Kami's eight invariants"
+description: "Kami's design language — warm parchment canvas, ink-blue accent, serif authority — and the eight aesthetic invariants that govern every document."
+---
+
+Kami is not a UI framework. It is a set of aesthetic constraints for print — a system that assumes a high-quality document should read like literature, not a dashboard. Every rule trades the same way: rather than add another option, remove another temptation. The result is a coherent visual language built around warm parchment, a single ink-blue accent, and serif typography that carries authority across six document types.
+
+## The eight invariants
+
+Think carefully before violating any of these. They are not preferences; they are the load-bearing walls of the system.
+
+1. **Page background parchment `#f5f4ed`, never pure white.** The warm cream surface is the emotional foundation of every document.
+2. **Single accent: ink-blue `#1B365D`, no second chromatic color.** Ink-blue covers ≤ 5% of document surface area. More than that is ornament, not restraint.
+3. **All grays warm-toned (yellow-brown undertone), no cool blue-grays.** In `rgb()`, warm gray is R ≈ G > B. Cool gray (R = G = B or R < G) is forbidden.
+4. **English: serif for headlines and body. Chinese: serif headlines, sans body. Sans only for UI elements** (labels, eyebrows, meta) in both languages.
+5. **Serif weight locked at 500, no bold.** Single-weight consistency is part of the design language. Never 400, never 700 for serif.
+6. **Line-heights: tight headlines 1.1–1.3, dense body 1.4–1.45, reading body 1.5–1.55. Never 1.6+.** Print at pt sizes feels loose and floats at web rhythm.
+7. **Tag backgrounds must be solid hex, never `rgba()`.** WeasyPrint's alpha compositing produces a visible double rectangle on zoom.
+8. **Depth via ring shadow or whisper shadow, never hard drop shadows.** `box-shadow: 0 2px 8px rgba(0,0,0,0.3)` and its relatives are forbidden.
+
+<Note>
+  The source also states: **no italic anywhere.** No `font-style: italic` in any template or demo, and no italic `@font-face` declarations are needed.
+</Note>
+
+## Design philosophy
+
+Kami's visual language compresses into one sentence: **warm parchment canvas, ink-blue accent, serif carries authority, refuse cool grays and hard shadows.**
+
+Four pillars underpin this:
+
+- **Warm parchment canvas.** The page background `#f5f4ed` is not a neutral default — it is a deliberate choice that makes ink-blue pop and prevents the cold, clinical feel of pure white.
+- **Single accent color.** Ink-blue `#1B365D` does all chromatic work: CTAs, section-title left bars, tag text, link color. A second accent color would dilute focus.
+- **No cool grays.** Every gray in the palette has a yellow-brown undertone. The mnemonic: R ≈ G > B. This keeps the palette unified and warm even in dense body text.
+- **Editorial whitespace.** Spacing follows a 4pt base unit. Margins grow as formality grows — a letter has 25 mm on all sides; a dense resume uses 11 mm top and bottom. Whitespace is not emptiness; it is editorial rhythm.
+
+This system is a fusion of Anthropic's visual language with real Chinese and English document iteration.
+
+## What this is not
+
+- **Not a web UI framework.** There are no React components, no CSS-in-JS, no design tokens for interactive states. Everything targets print via WeasyPrint.
+- **Not a dark or cyberpunk aesthetic.** Dark sections (`sd-alt`) exist for long-doc rhythm, but the primary surface is always warm parchment. The system does not support a full dark mode.
+- **Not a multi-color system.** Do not add a second accent, a success green, or a warning orange. Functional colors (`--error`, `--focus`) exist strictly for error states and accessibility — not for decoration.
+- **Not a flexible guideline.** The eight invariants are not suggestions. Violating them produces documents that look like something else — not Kami.
+
+## Explore the system
+
+<CardGroup cols={2}>
+  <Card title="Typography" icon="type" href="/design/typography">
+    Newsreader serif, Inter sans, the full type scale, weight rules, and bilingual font stacks.
+  </Card>
+  <Card title="Color" icon="palette" href="/design/color">
+    Parchment, ink-blue, warm neutrals, and the rgba-to-solid conversion table for WeasyPrint.
+  </Card>
+  <Card title="Spacing and layout" icon="ruler" href="/design/spacing-layout">
+    4pt base grid, A4 page margins per document type, and print pagination rules.
+  </Card>
+  <Card title="Components" icon="layout" href="/design/components">
+    Cards, tags, buttons, section titles, quotes, code blocks, metrics, and depth rules.
+  </Card>
+</CardGroup>

@@ -1,0 +1,66 @@
+---
+title: "Slides template: editorial keynote decks in PPTX"
+description: "Python-generated PPTX slide deck using python-pptx. Unlike the HTML-to-PDF templates, slides.py outputs a .pptx file that carries the full Kami design language."
+---
+
+The slides template is the one document type in Kami that does not use an HTML template rendered to PDF. Instead, `slides.py` and `slides-en.py` are Python scripts that generate a `.pptx` file via `python-pptx`. The output carries the same design language as the rest of the system — warm parchment canvas, ink-blue accent, Newsreader serif hierarchy for English — but the output format is a native PowerPoint file, not a PDF.
+
+## Templates
+
+| Language | Template file |
+|---|---|
+| Chinese | `assets/templates/slides.py` |
+| English | `assets/templates/slides-en.py` |
+
+## How slides differ from other templates
+
+All other Kami templates are HTML files rendered to PDF by WeasyPrint. The slides template works differently:
+
+- The template **is a Python script**, not an HTML file
+- Running the script generates `output.pptx` in the template directory
+- The build script moves `output.pptx` to `assets/examples/slides-en.pptx`
+- The design tokens (parchment, ink-blue, Newsreader, Inter) are applied via `python-pptx` objects directly in the script
+
+<Info>
+  Because slides uses `python-pptx` rather than WeasyPrint, the CSS rule checks in `python3 scripts/build.py --check` do not apply to the slides templates. Page overflow verification (`--verify`) also does not apply — slides have no A4 page contract.
+</Info>
+
+## Build command
+
+```bash
+python3 scripts/build.py slides-en
+```
+
+For the Chinese template:
+
+```bash
+python3 scripts/build.py slides
+```
+
+The build script runs the Python script with the template directory as the working directory, then moves the generated `output.pptx` to:
+
+```
+assets/examples/slides-en.pptx
+```
+
+## Design language
+
+The slides template uses the same Kami design language as the PDF templates:
+
+- **Background**: warm parchment `#f5f4ed`
+- **Accent**: ink-blue `#1B365D` for headlines, section bars, and emphasis
+- **Typefaces**: Newsreader serif for headlines and body (English); Inter sans for labels and metadata
+- **Weight**: serif locked at 500, no bold headings
+- **Grays**: warm-toned only; no cool blue-grays
+
+The result is an editorial deck that matches the visual register of a Kami long-doc or portfolio — consistent if both documents are handed to the same audience.
+
+<Tip>
+  Kami routes to the slides template when the user says: **"slides / PPT / deck / 演示"**. If the user's request is ambiguous between a printed leave-behind and a presented deck, ask before proceeding — the answer determines which template to use.
+</Tip>
+
+## Related
+
+- [Long doc](/documents/long-doc) — when the content will be read rather than presented
+- [Portfolio](/documents/portfolio) — when the deck is a visual case study showcase
+- [One-pager](/documents/one-pager) — when the audience needs a printed handout alongside the deck

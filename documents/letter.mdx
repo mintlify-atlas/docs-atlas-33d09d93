@@ -1,0 +1,77 @@
+---
+title: "Letter template: formal correspondence and notices"
+description: "Single-page formal correspondence: letterhead structure, 11–12pt body, 25mm margins, no decoration. For resignations, recommendations, and proposals."
+---
+
+The Kami letter template covers formal correspondence where the writing itself carries authority — resignation notices, recommendation letters, formal collaboration proposals, and personal statements. Unlike the resume or one-pager, a letter is designed to be read at full pace, not scanned. The type is slightly larger (11–12pt body), paragraph spacing is generous, and decorative elements are absent by design.
+
+## Templates
+
+| Language | Template file |
+|---|---|
+| Chinese | `assets/templates/letter.html` |
+| English | `assets/templates/letter-en.html` |
+
+## Document structure
+
+The letter template follows standard formal correspondence structure:
+
+1. **Letterhead** — sender name, title, and contact (top right or centered)
+2. **Date** — right-aligned, below the letterhead
+3. **Recipient salutation** — left-aligned, "Dear [Name]," format
+4. **Body** — 3–5 paragraphs
+5. **Sign-off** — "Sincerely," or "Best regards,"
+6. **Signature** — serif weight 500, name below sign-off
+7. **Enclosures** — listed below signature if applicable
+
+## Writing rules
+
+- **Minimal decoration** — no metric cards, no tags, no section-title left bars
+- **Body type**: 11–12pt (larger than resume or one-pager; this document is read, not scanned)
+- **Paragraph spacing**: ≥ 10pt between paragraphs
+- Body uses serif for editorial authority
+- No opening ceremony — the first sentence of the first paragraph should state the purpose directly
+
+## Common use cases
+
+<CardGroup cols={2}>
+  <Card title="Resignation / notice" icon="file-text">
+    Formal notice of departure with effective date, transition commitments, and acknowledgment of the role.
+  </Card>
+  <Card title="Recommendation letter" icon="star">
+    Third-party endorsement with specific evidence of the candidate's contribution, judgment, and fit.
+  </Card>
+  <Card title="Formal collaboration proposal" icon="handshake">
+    Structured proposal addressed to a named recipient, with a clear ask and next step.
+  </Card>
+  <Card title="Personal statement" icon="user">
+    First-person narrative for applications, addressing a specific prompt or panel.
+  </Card>
+</CardGroup>
+
+## Build command
+
+```bash
+python3 scripts/build.py letter-en
+```
+
+For the Chinese template:
+
+```bash
+python3 scripts/build.py letter
+```
+
+The build script enforces a **1-page hard limit** for letters. If the body runs over one page, shorten to 3–4 paragraphs or tighten paragraph spacing before adjusting any CSS.
+
+<Note>
+  Letter margins are the most generous in the system — `25mm` on all four sides — matching the formal register of the document. Do not reduce these margins to fit more content; if the body does not fit in one page at 25mm margins, the content needs to be shorter.
+</Note>
+
+## Page margins
+
+Letter margins are `25mm · 25mm · 25mm · 25mm` — equal on all sides, the most formal margin setting in Kami.
+
+## Related
+
+- [One-pager](/documents/one-pager) — when the correspondence needs accompanying data
+- [Resume](/documents/resume) — when the letter accompanies a CV submission

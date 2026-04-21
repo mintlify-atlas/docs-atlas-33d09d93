@@ -1,0 +1,199 @@
+---
+title: "Production: building and validating Kami PDFs"
+description: "The build.py command reference — all subcommands, build targets, font setup, page count contracts, and the verification loop for Kami PDF and PPTX outputs."
+---
+
+Kami's production pipeline runs HTML templates through WeasyPrint to produce print-ready PDFs. The flow is: fill a template with content → run `build.py` → WeasyPrint renders the HTML to PDF → `pypdf` reads the page count → `pdffonts` confirms font embedding. The `scripts/build.py` script is the productized version of this loop. It handles all 15 examples (10 HTML templates, 3 diagram HTMLs, 2 PPTX scripts) and exposes subcommands for building, verifying, scanning for CSS violations, and checking token drift.
+
+## Dependencies
+
+Install WeasyPrint and pypdf before running any build commands:
+
+```bash
+pip install weasyprint pypdf --break-system-packages --quiet
+```
+
+On Linux, you also need the Pango font rendering libraries:
+
+```bash
+apt install -y libpango-1.0-0 libpangoft2-1.0-0 fonts-noto-cjk
+```
+
+<Note>
+WeasyPrint resolves `@font-face` `src: url(...)` paths relative to the HTML file's location (the `base_url`). The build script sets `base_url` to the source directory automatically, so fonts placed alongside the HTML file will be found.
+</Note>
+
+## Build commands
+
+All commands run from the repository root.
+
+### Build all 15 examples
+
+```bash
+python3 scripts/build.py
+```
+
+Builds all 10 HTML templates, 3 diagram HTMLs, and 2 PPTX scripts. Outputs to `assets/examples/`. Prints page counts for each target and marks failures with `✗`.
+
+### Build a single target
+
+```bash
+python3 scripts/build.py <target>
+```
+
+Builds one target, prints its page count, and runs `pdffonts` to show which fonts were embedded. Useful when iterating on a specific template.
+
+```bash
+python3 scripts/build.py resume-en
+python3 scripts/build.py one-pager
+python3 scripts/build.py diagram-architecture
+```
+
+### CSS violation scan
+
+```bash
+python3 scripts/build.py --check
+```
+
+Scans all templates for CSS rule violations without building any PDFs. Fast — use this before `--verify`. Catches:
+
+- `rgba()` used on backgrounds (tag double-rectangle bug)
+- Cool / neutral gray hex values (violates warm-undertone invariant)
+- `line-height` values above 1.55
+
+Add `-v` for verbose output showing each scanned file:
+
+```bash
+python3 scripts/build.py --check -v
+```
+
+### Full verification
+
+```bash
+python3 scripts/build.py --verify
+```
+
+Runs the complete verification sequence on all targets:
+
+1. Source file exists
+2. `{{...}}` placeholder scan — unfilled placeholders are errors
+3. WeasyPrint render to PDF
+4. Page count check — overflow warning if the target exceeds its `max_pages` limit
+5. Font embedding check — Chinese targets expect `TsangerJinKai02`; English targets expect `Newsreader` and `Inter`; missing primary fonts trigger a fallback warning
+
+### Verify a single target
+
+```bash
+python3 scripts/build.py --verify <target>
+```
+
+Runs the full verification sequence on one target only:
+
+```bash
+python3 scripts/build.py --verify resume-en
+python3 scripts/build.py --verify long-doc
+```
+
+### CSS token drift check
+
+```bash
+python3 scripts/build.py --sync
+```
+
+Compares CSS variable values in every template's `:root {}` block against the canonical values in `references/tokens.json`. Reports any token that is defined in a template but has drifted from the canonical value. Templates that don't define a token are not flagged.
+
+<Tip>
+Run `--check` before `--verify`. The CSS scan is fast (no PDF build) and catches rgba and cool-gray violations early. Fix those first, then run `--verify` to confirm page counts and font embedding.
+</Tip>
+
+## Build targets
+
+### HTML targets
+
+| Target | Source file | Page limit |
+|---|---|---|
+| `one-pager` | `one-pager.html` | 1 |
+| `letter` | `letter.html` | 1 |
+| `long-doc` | `long-doc.html` | none |
+| `portfolio` | `portfolio.html` | none |
+| `resume` | `resume.html` | 2 |
+| `one-pager-en` | `one-pager-en.html` | 1 |
+| `letter-en` | `letter-en.html` | 1 |
+| `long-doc-en` | `long-doc-en.html` | none |
+| `portfolio-en` | `portfolio-en.html` | none |
+| `resume-en` | `resume-en.html` | 2 |
+
+Sources live in `assets/templates/`. Outputs go to `assets/examples/`.
+
+### Diagram targets
+
+| Target | Source file |
+|---|---|
+| `diagram-architecture` | `assets/diagrams/architecture.html` |
+| `diagram-flowchart` | `assets/diagrams/flowchart.html` |
+| `diagram-quadrant` | `assets/diagrams/quadrant.html` |
+
+Diagram targets have no page count contract.
+
+### PPTX targets
+
+| Target | Source file |
+|---|---|
+| `slides` | `slides.py` |
+| `slides-en` | `slides-en.py` |
+
+PPTX targets run the Python script and move the output `output.pptx` to `assets/examples/<target>.pptx`.
+
+## Font requirements
+
+Font availability directly affects page count. Any font swap requires re-running the page count check.
+
+**Chinese templates** (`one-pager`, `letter`, `long-doc`, `portfolio`, `resume`):
+- Primary serif: `TsangerJinKai02-W04.ttf` (commercial — requires license from tsanger.cn for commercial use)
+- Fallback chain: Source Han Serif SC → Noto Serif CJK SC → Songti SC → Georgia
+
+**English templates** (`one-pager-en`, `letter-en`, `long-doc-en`, `portfolio-en`, `resume-en`):
+- Primary serif: `Newsreader` (Google Fonts, open source)
+- Primary sans: `Inter` (open source)
+- Fallback chain: Charter (macOS) / Georgia → Helvetica Neue / system-ui
+
+The most stable setup is placing font files alongside the HTML file and using relative paths in `@font-face`:
+
+```html
+<style>
+@font-face {
+  font-family: "Newsreader";
+  src: url("Newsreader-VariableFont.ttf");
+}
+body { font-family: "Newsreader", serif; }
+</style>
+```
+
+To confirm which fonts actually loaded in a built PDF:
+
+```bash
+pdffonts assets/examples/resume-en.pdf
+```
+
+If the output shows `DejaVuSerif` or `Bitstream Vera`, the specified font did not load and fell through to the system ultimate fallback. Expected output names: `Newsreader`, `Charter`, `TsangerJinKai02`.
+
+## Page count contracts
+
+| Document | Limit | Enforcement |
+|---|---|---|
+| `one-pager` / `one-pager-en` | 1 page | Hard — build fails if exceeded |
+| `letter` / `letter-en` | 1 page | Hard — build fails if exceeded |
+| `resume` / `resume-en` | 2 pages | Hard — build fails if exceeded |
+| `long-doc` / `long-doc-en` | none | No hard limit |
+| `portfolio` / `portfolio-en` | none | No hard limit |
+
+For resume, overflow is the most common failure mode. The most frequent cause is a font fallback with slightly different metrics. Run `--verify` to catch it, then run `pdffonts` to confirm which font loaded.
+
+If the resume overflows, fix in this priority order:
+1. Cut redundant qualifiers ("deeply researched" → "researched")
+2. Merge related data points in the same section
+3. Drop non-essential items whole
+4. Reduce section spacing (affects global rhythm — use sparingly)
+5. Last resort: shrink font-size by 0.1–0.2pt
+
+Do not cut cover, education, or timeline structural blocks. Do not cut emphasis spans — a flat resume is worse than a long one.

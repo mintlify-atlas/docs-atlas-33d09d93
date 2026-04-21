@@ -1,0 +1,221 @@
+---
+title: "UI components: cards, tags, buttons, and metrics"
+description: "Reference for all Kami CSS components — cards, tags, buttons, section titles, quotes, code blocks, metrics, lists, depth, and dark sections."
+---
+
+These are print CSS components, not web React components. Each one is a CSS class (or small set of classes) that you apply to HTML elements in a Kami template. They render through WeasyPrint to produce consistent print output. The CSS shown here is the canonical source — copy it exactly when building or modifying templates.
+
+## Cards and containers
+
+Cards lift content off the parchment surface using the ivory background and a subtle cream border. The featured variant adds a larger radius and a whisper shadow for hero elements.
+
+```css
+.card {
+  background: var(--ivory);
+  border: 0.5pt solid var(--border-cream);
+  border-radius: 8pt;
+  padding: 16pt 20pt;
+}
+
+.card-featured {
+  border-radius: 16pt;
+  box-shadow: 0 4pt 24pt rgba(0,0,0,0.05);   /* whisper shadow */
+}
+```
+
+`.card-featured` extends `.card` — apply both classes. To highlight one card in a list, add `border: 0.5pt solid var(--brand)` or `border-left: 3pt solid var(--brand)`.
+
+## Tags
+
+Three tiers from weakest to strongest visual weight. In practice, the lightest solid wins most of the time — the gradient brush tier often steals focus unintentionally.
+
+<Warning>
+  All tag backgrounds must be solid hex. Never use `rgba()` for tag backgrounds. WeasyPrint renders a visible double rectangle when alpha compositing is applied to padding vs glyph areas. Use the pre-computed solid equivalents from the [color system](/design/color#rgba-to-solid-conversion).
+</Warning>
+
+**Lightest solid** — default, most restrained:
+
+```css
+.tag {
+  background: #EEF2F7;      /* 0.08 solid equivalent */
+  color: var(--brand);
+  font-size: 8pt;
+  font-weight: 600;
+  padding: 1pt 5pt;
+  border-radius: 2pt;
+  letter-spacing: 0.4pt;
+  text-transform: uppercase;
+}
+```
+
+**Standard solid** — when more contrast is needed:
+
+```css
+.tag {
+  background: #E4ECF5;      /* 0.18 solid equivalent */
+  color: var(--brand);
+  padding: 1pt 6pt;
+  border-radius: 4pt;
+}
+```
+
+**Gradient brush** — only when a "hand-painted" feel is required; use sparingly:
+
+```css
+.tag {
+  background: linear-gradient(to right, #D6E1EE, #E4ECF5 70%, #EEF2F7);
+  color: var(--brand);
+  padding: 1pt 5pt;
+  border-radius: 2pt;
+}
+```
+
+## Buttons
+
+Primary uses the brand fill with ivory text. Secondary uses warm-sand with charcoal text. Both use ring shadows — not hard drop shadows.
+
+```css
+/* Primary — brand-colored */
+.btn-primary {
+  background: var(--brand);
+  color: var(--ivory);
+  padding: 8pt 16pt;
+  border-radius: 8pt;
+  box-shadow: 0 0 0 1pt var(--brand);   /* ring shadow */
+}
+
+/* Secondary — warm-sand */
+.btn-secondary {
+  background: var(--warm-sand);
+  color: var(--charcoal);
+  padding: 8pt 16pt;
+  border-radius: 8pt;
+  box-shadow: 0 0 0 1pt var(--ring-warm);
+}
+```
+
+## Section title
+
+The 2.5 pt brand left bar is the signature move of the Kami design language. It appears on every section heading across all six document types.
+
+```css
+.section-title {
+  font-family: var(--serif);
+  font-size: 14pt;
+  font-weight: 500;
+  color: var(--near-black);
+  margin: 24pt 0 10pt 0;
+  border-left: 2.5pt solid var(--brand);
+  border-radius: 1.5pt;
+  padding-left: 8pt;
+}
+```
+
+## Metric
+
+Data cards for key numbers shown side-by-side — common in one-pager headers, resume tops, and portfolio covers. Combines a large serif number with a small sans label at baseline alignment.
+
+```css
+.metrics { display: flex; gap: 24pt; }
+.metric  { flex: 1; display: flex; align-items: baseline; gap: 6pt; }
+
+.metric-value {
+  font-family: var(--serif);
+  font-size: 16pt;
+  font-weight: 500;
+  color: var(--brand);
+  font-variant-numeric: tabular-nums;   /* align digits in columns */
+}
+
+.metric-label { font-size: 9pt; color: var(--olive); }
+```
+
+## Quote
+
+A 2 pt brand left border with olive body text. Line-height stays at reading body (1.55) because quotes are prose, not dense data.
+
+```css
+.quote {
+  border-left: 2pt solid var(--brand);
+  padding: 4pt 0 4pt 14pt;
+  color: var(--olive);
+  line-height: 1.55;
+}
+```
+
+## Code block
+
+Ivory background lifted off parchment, a fine cream border, 6 pt radius, and mono font at 8.5 pt. The 0.5 pt border is intentionally thin — a heavier border would make the block feel heavy.
+
+```css
+.code-block {
+  background: var(--ivory);
+  border: 0.5pt solid var(--border-cream);
+  border-radius: 6pt;
+  padding: 10pt 14pt;
+  font-family: var(--mono);
+  font-size: 8.5pt;
+  line-height: 1.5;
+}
+```
+
+<Note>
+  Thin borders (`< 1pt`) combined with `border-radius` can trigger a double-ring rendering artifact in WeasyPrint. If you see a faint outer ring, increase the border width to `1pt` or remove `border-radius`.
+</Note>
+
+## Lists
+
+Standard lists use brand-colored markers. The editorial dash variant replaces the bullet with an en-dash for a bookish, literary feel.
+
+**Standard list:**
+
+```css
+ul, ol {
+  padding-left: 16pt;
+  line-height: 1.55;
+}
+ul li::marker { color: var(--brand); }
+```
+
+**Dash variant** (en-dash editorial):
+
+```css
+ul.dash { list-style: none; padding-left: 0; }
+ul.dash li { padding-left: 14pt; }
+ul.dash li::before {
+  content: "\2013";
+  color: var(--brand);
+}
+```
+
+## Depth and shadow
+
+Kami avoids traditional hard drop shadows entirely. Depth comes from two shadow types and section-level light/dark alternation.
+
+**Ring shadow** — simulates a pressed-in border:
+
+```css
+box-shadow: 0 0 0 1pt var(--ring-warm);
+box-shadow: 0 0 0 1pt var(--ring-deep);   /* hover / active */
+```
+
+**Whisper shadow** — barely visible lift, used on `.card-featured`:
+
+```css
+box-shadow: 0 4pt 24pt rgba(0, 0, 0, 0.05);
+```
+
+**Forbidden**: `box-shadow: 0 2px 8px rgba(0,0,0,0.3)` and any shadow with opacity above ~0.08.
+
+## Dark sections
+
+Long docs and portfolios alternate parchment and dark sections to create visual rhythm. Add `.sd-alt` to any section container to switch it to dark mode.
+
+```css
+/* Applied automatically when .sd-alt is present */
+/* Background: --deep-dark (#141413) */
+/* Body text: --warm-silver (#b0aea5) */
+/* Headings: --ivory */
+```
+
+The entire section's ambient light shifts — more dramatic than any shadow. Use `.sd-alt` for section-level alternation only. Never use it in print templates (resume, letter, one-pager); it is appropriate only for showcase-style long docs and portfolios.

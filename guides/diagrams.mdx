@@ -1,0 +1,139 @@
+---
+title: "Diagram primitives: architecture, flowchart, and quadrant"
+description: "Kami's three built-in SVG diagram types — architecture, flowchart, quadrant — when to use each, and how to embed them in long-doc, portfolio, or slides."
+---
+
+Diagrams in Kami are primitives, not a seventh document type. They exist to embed inside long-doc, portfolio, and slides — not as standalone deliverables. Kami ships three diagram types: architecture, flowchart, and quadrant. All three are self-contained HTML files with inline SVG and no JavaScript or build step. You can preview them directly in a browser, or extract the `<svg>` block and drop it into any Kami document template.
+
+## Three diagram types
+
+<CardGroup cols={3}>
+  <Card title="Architecture" icon="network">
+    **File**: `assets/diagrams/architecture.html`
+
+    Use when showing system components and their connections. The right choice for technical white papers and portfolio pages where you need to illustrate a layer or service boundary you owned.
+  </Card>
+  <Card title="Flowchart" icon="git-branch">
+    **File**: `assets/diagrams/flowchart.html`
+
+    Use for decision branches and "if A then B else C" logic. Works well in one-pagers showing a decision path or in slides where the body is a single process flow.
+  </Card>
+  <Card title="Quadrant" icon="layout-grid">
+    **File**: `assets/diagrams/quadrant.html`
+
+    Use for two-axis positioning or prioritization. The standard choice for competitive positioning in portfolio project pages and priority matrices in one-pagers.
+  </Card>
+</CardGroup>
+
+Not every visual need requires one of these three types. Some common requests are better served by other means:
+
+| Need | Use instead |
+|---|---|
+| Time / stages | Built-in timeline component in `resume.html` or `one-pager.html` |
+| Compare two things | A three-column table (beats any binary-contrast diagram) |
+| Hierarchy / nested lists | A nested markdown `ul` |
+| One box with a label | Delete the box, write the sentence |
+
+## When to draw a diagram
+
+Before opening any diagram file, ask yourself:
+
+> Would a well-written paragraph teach the reader less than this diagram?
+
+If the answer is "no" — the paragraph would teach the same or more — don't draw. Diagrams add signal for hierarchy, direction, and magnitude. They do not decorate prose.
+
+**Complexity budget: 4/10.** Enough to be technically complete, not so dense the reader needs a guide.
+
+- More than 9 nodes → split into two diagrams
+- Two nodes that always travel together → they are one node
+- A line whose meaning is obvious from layout → remove the line
+- More than 2 focal nodes (ink-blue fill) → you haven't decided what's focal
+
+**Focal rule**: 1–2 focal elements per diagram. Focal signal comes from contrast, not count. Everything non-focal goes neutral.
+
+**Common pairings by document type**:
+
+| Document | Diagram |
+|---|---|
+| Technical white paper | Architecture (system overview) + built-in timeline |
+| Portfolio project page | Quadrant (competitive positioning) or architecture (the layer you owned) |
+| One-pager | Quadrant (priority) or flowchart (decision path) — one diagram only |
+| Resume | No diagrams. Resume real-estate costs more than diagrams |
+| Slides | One diagram per slide, max. The diagram is the body; text is caption |
+
+## How to embed
+
+Each diagram file is a complete HTML page — it has a title, framing markup, and an `<svg>` block. When embedding in a Kami document, you extract only the SVG.
+
+<Steps>
+  <Step title="Open the diagram HTML file">
+    Open the relevant file from `assets/diagrams/` — `architecture.html`, `flowchart.html`, or `quadrant.html` — in your editor or browser. You can also preview it directly in a browser to confirm the diagram looks correct before embedding.
+  </Step>
+  <Step title="Extract the SVG block">
+    Locate the `<svg viewBox="...">` element and copy everything from the opening `<svg` tag to the closing `</svg>` tag. Leave the surrounding `<h1>`, `<figure>` frame, and page markup behind — you only need the SVG content itself.
+  </Step>
+  <Step title="Paste into a figure in your template">
+    Drop the extracted SVG into a `<figure>` element inside your long-doc, portfolio, or slides template. `long-doc.html` already styles `figure` and `figcaption` — no extra CSS required.
+
+    ```html
+    <figure>
+      <svg viewBox="0 0 960 460" xmlns="http://www.w3.org/2000/svg">
+        <!-- svg content copied from architecture.html -->
+      </svg>
+      <figcaption>Figure 1. {{Short editorial caption in serif.}}</figcaption>
+    </figure>
+    ```
+  </Step>
+  <Step title="Edit nodes and text as needed">
+    Edit `<text>` and `<rect>` values directly in the SVG. All coordinates, widths, and gaps must be divisible by 4. Node widths use three tiers: 128 / 144 / 160 — don't add a fourth. Arrow endpoints must land exactly on node edges, not "close enough."
+  </Step>
+  <Step title="Build and verify">
+    Run the build script to confirm the diagram renders correctly in the PDF output:
+
+    ```bash
+    python3 scripts/build.py diagram-architecture
+    python3 scripts/build.py diagram-flowchart
+    python3 scripts/build.py diagram-quadrant
+    ```
+
+    Or open the HTML file directly in a browser for a fast visual check.
+  </Step>
+</Steps>
+
+## Color tokens
+
+All three diagrams share the same token map, which maps directly to Kami's design system. Do not add a fourth color state — Kami has one accent.
+
+| SVG role | Token | Value |
+|---|---|---|
+| Canvas | `--parchment` | `#f5f4ed` |
+| Standard node fill | — | `#ffffff` |
+| Standard node stroke | `--near-black` | `#141413` |
+| **Focal fill** | `--brand-tint` | `#EEF2F7` |
+| **Focal stroke** | `--brand` | `#1B365D` |
+| Standard arrow | `--olive` | `#5e5d59` |
+| Focal arrow | `--brand` | `#1B365D` |
+| Primary text | `--near-black` | `#141413` |
+| Secondary text | `--olive` | `#5e5d59` |
+| Tertiary / mono label | `--stone` | `#87867f` |
+
+<Note>
+WeasyPrint does not support `<marker orient="auto">`. Markers always render at 0° (pointing right). The fix is to skip `<marker>` entirely and draw each arrowhead as a manual chevron `<path>` with hardcoded direction. See the [production guide](/guides/production) for chevron path templates.
+</Note>
+
+## Anti-patterns to avoid
+
+Scan for these when drawing or reviewing any diagram:
+
+| Anti-pattern | Why it fails |
+|---|---|
+| All nodes identical size | Destroys hierarchy |
+| Ink-blue on every "important" node | Focal rule is 1–2, not a signaling system |
+| `box-shadow` on anything | Kami only permits ring / whisper |
+| `border-radius` above 10px | Max 6–10px; beyond looks like App Store chrome |
+| Arrow labels without a masking rect | Line bleeds through the text |
+| Gradient backgrounds | Kami forbids them |
+| Emoji icons | Avoid entirely |
+| SVG text clipped at the viewBox top | `text y` is the baseline; cap letters extend above `y=0`. Pad by `font-size × 1.2` |
+| Gap between arrow endpoint and node edge | Reads as "arrow floating in space." Anchor to exact `box.x / box.x+w` |
+| Per-node custom widths | Use 2 tiers for small diagrams, 3 tiers for large — that's the full budget |

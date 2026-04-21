@@ -1,0 +1,79 @@
+---
+title: "One-pager template: executive summaries and proposals"
+description: "Single-page format for executive summaries and proposals. Enforces a 1-page hard limit, serif display hierarchy, and a 30%+ data density requirement."
+---
+
+A one-pager in Kami is the most constrained document format: one A4 page, one argument, 200–350 words. It is built for the reader who will give it 30 seconds. The template enforces parchment canvas and ink-blue accent, with a serif display headline over metric cards and a tight editorial grid — no opening ceremony, no filler paragraphs.
+
+## Templates
+
+| Language | Template file |
+|---|---|
+| Chinese | `assets/templates/one-pager.html` |
+| English | `assets/templates/one-pager-en.html` |
+
+## Document structure
+
+The one-pager follows a fixed five-part hierarchy drawn from the writing spec:
+
+1. **Headline** — serif display + one-line sans subtitle
+2. **Metrics** — 3–4 cards, numbers first, ink-blue value text
+3. **Core argument** — 1–2 paragraphs, claim in the first sentence
+4. **Key evidence** — 3–5 short bullets; each headline should work standalone
+5. **Next step / contact** — footer with a single CTA or contact line
+
+## How to use
+
+<Steps>
+  <Step title="Pick the template">
+    Copy the matching template into your working directory. Do not write HTML from scratch.
+
+    ```bash
+    cp assets/templates/one-pager-en.html my-proposal-en.html
+    ```
+  </Step>
+  <Step title="Fill the sections">
+    Edit only the body — CSS stays untouched. Replace every `{{placeholder}}` with real content:
+
+    - Write the metric values first; data must fill **30% or more** of the body area
+    - Keep total word count between **200 and 350**
+    - Every section headline must work as a standalone outline item
+    - No opening ceremony ("In recent years, as technology has rapidly evolved…")
+  </Step>
+  <Step title="Build and verify">
+    Run the build script against the English target. The `--verify` flag checks page count, font embedding, and unfilled placeholders.
+
+    ```bash
+    python3 scripts/build.py --verify one-pager-en
+    ```
+
+    For the Chinese template:
+
+    ```bash
+    python3 scripts/build.py --verify one-pager
+    ```
+
+    The script enforces a **1-page hard limit** and will print `✗ one-pager-en: N pages (limit 1)` if the content overflows.
+  </Step>
+</Steps>
+
+## Writing rules
+
+- Total word count: **200–350 words**
+- Page limit: **1 A4 page** (hard limit enforced by build script)
+- Data density: **30%+ of body** must be quantifiable (numbers, percentages, dates)
+- Every emphasized span must be a number or distinctive phrase — not an adjective
+- Data format: `5,000+` not `5000+`; `90%` not `90 %`; `~$10M` not `$9,876,543`
+
+<Tip>
+  Kami routes to this template when the user says: **"one-pager / 方案 / 执行摘要 / exec summary"**. If the request is ambiguous, ask whether the output is intended for a decision-maker reading alone or a meeting handout — the answer determines how dense the metric row should be.
+</Tip>
+
+## Page margins
+
+One-pager margins are set to `15mm · 18mm · 15mm · 18mm` (T · R · B · L) — tighter than a letter, looser than a resume. Do not override these in the template body.
+
+## Related
+
+- [Long doc](/documents/long-doc) — when the argument needs more than one page
+- [Resume](/documents/resume) — when the one-pager is a personal career pitch

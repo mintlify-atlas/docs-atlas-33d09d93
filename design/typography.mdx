@@ -1,0 +1,106 @@
+---
+title: "Typography: serif authority with editorial spacing"
+description: "Kami's type system — Newsreader serif, Inter sans, the full size scale, weight rules, line-height tiers, and bilingual font stacks."
+---
+
+Typography in Kami follows a single organizing principle: **serif carries authority, sans carries utility**. Newsreader handles everything that requires weight and presence — headlines, body text, pull quotes. Inter handles everything functional — labels, metadata, UI eyebrows. The two fonts never compete because they never occupy the same role. This division, combined with a locked serif weight of 500, produces the consistent editorial tone that distinguishes Kami documents from generic output.
+
+## Font stacks
+
+Three CSS custom properties cover all typographic needs. Use these variables consistently — never hard-code a font-family value in a template.
+
+```css
+/* Serif for headlines and body — Silicon Valley editorial */
+font-family: "Newsreader",
+             "Source Serif 4", "Source Serif Pro",
+             "Charter",               /* macOS system font */
+             Georgia, "Times New Roman", serif;
+
+/* Sans for UI elements — Silicon Valley default */
+font-family: "Inter", "TsangerJinKai02",
+             -apple-system, BlinkMacSystemFont,
+             "Helvetica Neue", Arial, sans-serif;
+
+/* Mono for code */
+font-family: "JetBrains Mono", "SF Mono", "Fira Code",
+             Consolas, Monaco, monospace;
+```
+
+## Type scale
+
+All sizes are in pt for print (A4). For screen, multiply by 1.33 (9 pt ≈ 12 px, 18 pt ≈ 24 px).
+
+| Role | Size (pt) | Weight | Line-height | Use |
+|---|---|---|---|---|
+| Display | 36–48 | 500 | 1.10 | Cover title, one-pager hero |
+| H1 Section | 18–22 | 500 | 1.20 | Chapter titles |
+| H2 | 14–16 | 500 | 1.25 | Subsection |
+| H3 | 12–13 | 500 | 1.30 | Item titles |
+| Body Lead | 11 | 400 | 1.55 | Intro paragraphs |
+| Body | 9.5–10 | 400 | 1.55 | Reading body |
+| Body Dense | 9–9.2 | 400 | 1.42 | Dense body (resume, one-pager) |
+| Caption | 8.5–9 | 400 | 1.45 | Notes, figure captions |
+| Label | 7.5–8 | 600 | 1.35 | Small labels, corner tags |
+| Tiny | 7 | 400 | 1.40 | Footer, minor metadata |
+
+## Weight rules
+
+Weight is the most commonly violated rule. Keep it simple:
+
+- **Serif**: locked at **500**. Not 400, not 700. Single-weight consistency is part of the design language.
+- **Sans body**: 400 default.
+- **Sans labels / small titles**: 500 or 600.
+- **Forbidden**: 900 (black), 100 (thin).
+
+<Note>
+  Serif at 500 means you achieve emphasis through scale and placement — not weight. A 22 pt H1 at 500 has authority. A 10 pt body at 700 looks desperate.
+</Note>
+
+## Line-height rules
+
+Print documents are tighter than English web body. English web typically runs 1.6–1.75; at pt sizes that feels loose and floats off the page.
+
+| Tier | Value | Use |
+|---|---|---|
+| Tight headline | 1.10–1.30 | Display, H1, H2 |
+| Dense body | 1.40–1.45 | Resume, one-pager, dense information |
+| Reading body | 1.50–1.55 | Long-doc chapters, letters |
+| Label / caption | 1.30–1.40 | Small labels, multi-line metadata |
+
+<Warning>
+  Never use 1.6 or higher. This is the single most common error when adapting web styles for Kami. At print pt sizes, 1.6+ creates a loose, web-rhythm feel that breaks the editorial tone. Also avoid 1.00–1.05 except at extreme display sizes — lines will collide.
+</Warning>
+
+## Letter-spacing
+
+- **Body text**: 0 (or +0.05 pt, imperceptible).
+- **English headings above 20 pt**: −0.3 to −0.5 pt (tighten — English serifs handle it).
+- **Small labels (< 10 pt)**: +0.2 to +0.5 pt for readability.
+- **All-caps overlines**: +0.5 to +1 pt mandatory.
+
+## Bilingual fonts
+
+Kami ships with two font stacks depending on document language.
+
+<Tabs>
+  <Tab title="English">
+    Primary typefaces for English documents:
+
+    - **Serif**: Newsreader (Google Fonts, preferred) → Source Serif 4 → Charter (macOS) → Georgia
+    - **Sans**: Inter → system `-apple-system` stack → Helvetica Neue → Arial
+
+    Newsreader is designed for editorial reading at small sizes and has excellent print rendering at 9–10 pt body.
+  </Tab>
+  <Tab title="Chinese (中文)">
+    Chinese documents use a different strategy: **serif headlines, sans body**.
+
+    - **Serif (headlines only)**: TsangerJinKai02-W04 → Source Han Serif SC → Noto Serif CJK SC → Songti SC → Georgia
+    - **Sans (body)**: TsangerJinKai02 is listed in the sans stack for display use; body falls to Source Han Sans SC → Noto Sans CJK SC → PingFang SC → Arial
+
+    The `--sans` variable includes `"TsangerJinKai02"` so it participates in label and UI rendering alongside Inter.
+
+    <Warning>
+      **TsangerJinKai02 is a commercial font.** Commercial use requires a license from [tsanger.cn](https://tsanger.cn). Without the font file, the system falls back to: Source Han Serif SC → Noto Serif CJK SC → Songti SC → Georgia.
+    </Warning>
+  </Tab>
+</Tabs>

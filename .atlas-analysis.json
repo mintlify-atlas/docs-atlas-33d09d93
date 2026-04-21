@@ -1,0 +1,91 @@
+{
+  "projectType": "general",
+  "projectName": "Kami",
+  "projectDescription": "A warm-parchment document design system for AI agents that typesets professional documents — resumes, one-pagers, white papers, letters, portfolios, and slide decks — with a consistent ink-blue accent and editorial typography.",
+  "theme": "willow",
+  "primaryColor": "#ea8b57",
+  "lightColor": "#8fc8f8",
+  "darkColor": "#3c4c76",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Document Types",
+            "pages": [
+              "documents/one-pager",
+              "documents/long-doc",
+              "documents/resume",
+              "documents/letter",
+              "documents/portfolio",
+              "documents/slides"
+            ]
+          },
+          {
+            "group": "Design System",
+            "pages": [
+              "design/overview",
+              "design/typography",
+              "design/color",
+              "design/spacing-layout",
+              "design/components"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/content-strategy",
+              "guides/diagrams",
+              "guides/production",
+              "guides/troubleshooting"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Six document types: One-Pager, Long Doc, Letter, Portfolio, Resume, Slides",
+    "Full bilingual support: Chinese (TsangerJinKai02 + Source Han) and English (Newsreader + Inter)",
+    "Consistent warm-parchment design language with ink-blue accent",
+    "Inline SVG diagram primitives: architecture, flowchart, quadrant",
+    "WeasyPrint-based PDF generation with page-count enforcement",
+    "CSS rule validation via build.py --check and --sync",
+    "AI agent skill integration (Claude Code, Codex, opencode)",
+    "Dark section alternation for long-doc and portfolio templates"
+  ],
+  "publicApiSurface": [
+    "python3 scripts/build.py",
+    "python3 scripts/build.py <target>",
+    "python3 scripts/build.py --check",
+    "python3 scripts/build.py --verify",
+    "python3 scripts/build.py --verify <target>",
+    "python3 scripts/build.py --sync",
+    "npx skills add tw93/kami -a claude-code -g -y",
+    "npx skills add tw93/kami -a codex -g -y",
+    "npx skills add tw93/kami -a '*' -g -y",
+    "assets/templates/one-pager.html",
+    "assets/templates/one-pager-en.html",
+    "assets/templates/long-doc.html",
+    "assets/templates/long-doc-en.html",
+    "assets/templates/letter.html",
+    "assets/templates/letter-en.html",
+    "assets/templates/portfolio.html",
+    "assets/templates/portfolio-en.html",
+    "assets/templates/resume.html",
+    "assets/templates/resume-en.html",
+    "assets/templates/slides.py",
+    "assets/templates/slides-en.py",
+    "assets/diagrams/architecture.html",
+    "assets/diagrams/flowchart.html",
+    "assets/diagrams/quadrant.html"
+  ]
+}

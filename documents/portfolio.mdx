@@ -1,0 +1,75 @@
+---
+title: "Portfolio template: project case studies and showcase"
+description: "Visual-first case study format with per-project spreads of 1–2 pages. Every outcome must be quantifiable; dark section alternation available for rhythm."
+---
+
+The Kami portfolio template is built around project spreads: each featured project gets one to two pages with a title, type tag, date range, description, and a structured Role / Challenge / Outcome section. Visuals come first — the text supports the images, not the other way around. The template follows the same parchment-and-ink-blue design language as the rest of Kami, with dark section alternation available to create rhythm between projects.
+
+## Templates
+
+| Language | Template file |
+|---|---|
+| Chinese | `assets/templates/portfolio.html` |
+| English | `assets/templates/portfolio-en.html` |
+
+## Document structure
+
+The portfolio follows a five-part structure:
+
+1. **Cover** — name, one-line positioning statement, contact details
+2. **About** — half-page personal introduction
+3. **Per-project spreads** (1–2 pages each):
+   - Project title + type tag + date range
+   - One-line description
+   - 2–3 hero images (if applicable)
+   - Role + challenge + outcome
+4. **Selected works list** — additional projects as a short reference list
+5. **Contact** — return to full contact details
+
+## Writing rules
+
+- **Visuals first** — images, mockups, or screenshots anchor each project spread; text supports
+- **Every outcome must be quantifiable** — do not write "improved performance"; write the specific delta
+- Image hierarchy: **photos > design mockups > code screenshots** (the more concrete, the more compelling)
+- Do not list every technology used — a single mono tag row per project is sufficient
+- Every project's Role / Challenge / Outcome follows the same three-part discipline as resume project entries
+
+<Note>
+  The "selected works list" at the end of the portfolio is for projects that don't warrant a full spread. It works as a compact reference row: title, tag, year, one-line outcome. Keep it to five or fewer entries.
+</Note>
+
+## Dark section alternation
+
+The portfolio supports the same `.sd-alt` dark section class as long-doc. Use it to alternate the ambient tone between project spreads:
+
+```html
+<section class="sd-alt">
+  <!-- Background: #141413, body text: #b0aea5, headings: #faf9f5 -->
+</section>
+```
+
+Dark sections work well for the "About" half-page or as a visual separator between major project groups. Restrict to showcase-style sections — never apply `.sd-alt` to a text-heavy project description.
+
+## Build command
+
+```bash
+python3 scripts/build.py portfolio-en
+```
+
+For the Chinese template:
+
+```bash
+python3 scripts/build.py portfolio
+```
+
+Portfolio has no hard page limit (`max_pages = 0`). The expected range is **6 ± 2 pages**. If the document runs longer, consider moving additional projects to the selected works list rather than expanding each spread.
+
+## Page margins
+
+Portfolio margins are `12mm · 15mm · 12mm · 15mm` (T · R · B · L) — tighter than long-doc to allow visuals to breathe closer to the edge.
+
+## Related
+
+- [Resume](/documents/resume) — when the portfolio needs a condensed two-page career document alongside it
+- [Long doc](/documents/long-doc) — when one project needs a full white-paper treatment
+- [Slides](/documents/slides) — when the portfolio will be presented rather than handed over

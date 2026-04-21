@@ -1,0 +1,248 @@
+---
+title: "Troubleshooting: common WeasyPrint and rendering issues"
+description: "Seven WeasyPrint pitfalls in Kami: rgba double-rectangle bug, border double-ring, resume overflow, flex break-inside, viewport units, and SVG marker limits."
+---
+
+WeasyPrint is a capable CSS-to-PDF engine, but it has specific rendering behaviors that differ from browsers. Several of these behaviors affect Kami templates directly. This guide documents every known pitfall — each one came from a real failure in the Kami templates. Check here first when something looks wrong before reaching for the source HTML.
+
+<Warning>
+The rgba background bug (pitfall 1) is the most common issue. Any `rgba()` value on a `background` or `background-color` property will produce a double-rectangle artifact in the PDF. Convert all tag and card backgrounds to solid hex equivalents before building.
+</Warning>
+
+## Known pitfalls
+
+<AccordionGroup>
+  <Accordion title="1. Tag / badge double-rectangle bug">
+    **Symptom**: PDFs show two concentric rectangles on tag backgrounds — an outer softer one and an inner tighter one. Especially visible on mobile PDF viewers and at high zoom.
+
+    **Root cause**: WeasyPrint renders `rgba()` by compositing the padding area and the glyph pixel area independently. Glyph anti-aliasing stacks alpha differently, creating a second visible edge.
+
+    **Fix**: All tag and card backgrounds must use solid hex values. No `rgba()`.
+
+    ```css
+    /* ❌ */
+    .tag { background: rgba(201, 100, 66, 0.18); }
+
+    /* ✅ */
+    .tag { background: #E4ECF5; }
+    ```
+
+    **rgba → solid conversion table** (parchment `#f5f4ed` base + ink-blue `#1B365D`):
+
+    | rgba alpha | Solid hex |
+    |---|---|
+    | 0.08 | `#EEF2F7` |
+    | 0.14 | `#E4ECF5` |
+    | **0.18** | **`#E4ECF5`** ← default tag |
+    | 0.22 | `#D0DCE9` |
+    | 0.30 | `#D6E1EE` |
+
+    Formula: `solid_channel = base + (foreground - base) × alpha`. Different base colors (e.g. ivory `#faf9f5`) need re-computing.
+
+    If you want a subtle gradient texture on a tag, `linear-gradient` is safe — the whole tag rasterizes as one bitmap with no alpha compositing:
+
+    ```css
+    .tag { background: linear-gradient(to right, #D6E1EE, #E4ECF5 70%, #EEF2F7); }
+    ```
+
+    Use gradients sparingly. Priority order: lightest solid (`#EEF2F7`) > standard solid (`#E4ECF5`) > gradient (rarely). If the reader's eye lands on the tag background before the text inside, you went too far.
+  </Accordion>
+
+  <Accordion title="2. Thin border + border-radius double ring">
+    **Symptom**: `border: 0.4pt solid ...` combined with `border-radius: 2pt` shows two parallel arcs on zoom.
+
+    **Root cause**: WeasyPrint strokes the border inner and outer paths separately when the border is less than 1pt and the element has rounded corners. At thin widths, the two paths cannot overlap.
+
+    **Fix** (pick one):
+    1. Use a background fill instead — preferred, design-consistent with Kami's card pattern
+    2. Increase border width to ≥ 1pt
+    3. Remove `border-radius`
+
+    ```css
+    /* ❌ */
+    .badge { border: 0.4pt solid #87867f; border-radius: 2pt; }
+
+    /* ✅ option 1 — background fill */
+    .badge { background: #EEF2F7; border-radius: 2pt; }
+
+    /* ✅ option 2 — thicker border */
+    .badge { border: 1pt solid #87867f; border-radius: 2pt; }
+    ```
+  </Accordion>
+
+  <Accordion title="3. Resume 2-page overflow">
+    **Symptom**: The resume renders as 3 pages instead of 2. The build script reports `✗ resume-en: 3 pages (limit 2)`.
+
+    **Root cause**: Font fallback metrics, accidentally bumped `font-size`, or `line-height` pushed from 1.4 to 1.6 cause text to reflow and overflow the page limit.
+
+    **Diagnose**:
+    ```bash
+    pdffonts assets/examples/resume-en.pdf
+    ```
+    If `pdffonts` shows `DejaVuSerif` or `Bitstream Vera`, the specified font didn't load. Font fallback with different metrics is the most common overflow cause.
+
+    **Fix** (priority order):
+    1. Cut redundant qualifiers ("deeply researched" → "researched")
+    2. Merge related data points in the same section
+    3. Drop non-essential items whole — not piecemeal
+    4. Reduce section spacing (affects global rhythm, use sparingly)
+    5. Last resort: shrink `font-size` by 0.1–0.2pt
+
+    Do not cut cover, education, or timeline structural blocks. Do not cut brand-colored emphasis spans — a flat resume is worse than a long one.
+
+    Run `--verify` to catch overflow automatically:
+    ```bash
+    python3 scripts/build.py --verify resume-en
+    ```
+  </Accordion>
+
+  <Accordion title="4. break-inside fails inside flex containers">
+    **Symptom**: `.card { break-inside: avoid }` is set but cards still split across pages.
+
+    **Root cause**: WeasyPrint's `break-inside` support on direct children of `display: flex` containers is incomplete.
+
+    **Fix**: Wrap the flex item in an extra block container and apply `break-inside: avoid` to the wrapper, not the card itself.
+
+    ```html
+    <!-- ❌ direct flex child -->
+    <div class="row">
+      <div class="card">...</div>
+    </div>
+
+    <!-- ✅ wrapper block -->
+    <div class="row">
+      <div class="card-wrapper">
+        <div class="card">...</div>
+      </div>
+    </div>
+    ```
+
+    ```css
+    .row { display: flex; }
+    .card-wrapper { break-inside: avoid; }
+    /* .card itself needs no break-inside */
+    ```
+  </Accordion>
+
+  <Accordion title="5. height: 100vh inaccurate at @page">
+    **Symptom**: A full-bleed cover using `height: 100vh` renders empty or with incorrect sizing.
+
+    **Root cause**: Viewport units (`vh`, `vw`) are undefined in WeasyPrint's `@page` context. There is no viewport during PDF rendering.
+
+    **Fix**: Use explicit `mm` values derived from your `@page` size and margins.
+
+    ```css
+    /* ❌ */
+    .cover { height: 100vh; }
+
+    /* ✅ — A4 height (297mm) minus 40mm total top+bottom margin */
+    .cover {
+      min-height: 257mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="6. SVG marker orient='auto' not working">
+    **Symptom**: SVG arrows using `<marker orient="auto">` or `orient="auto-start-reverse"` all point right, regardless of the path's direction.
+
+    **Root cause**: WeasyPrint's SVG renderer does not support the `orient="auto"` attribute. The marker is always drawn at 0° (pointing right).
+
+    **Fix**: Skip `<marker>` entirely. Draw each arrowhead as a manual chevron `<path>` at the endpoint, with the direction hardcoded.
+
+    ```xml
+    <!-- ❌ marker arrow — WeasyPrint renders all pointing right -->
+    <defs>
+      <marker id="a" orient="auto" markerWidth="10" markerHeight="10">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="#5e5d59"/>
+      </marker>
+    </defs>
+    <path d="M 440 52 Q 568 52 568 244" marker-end="url(#a)"/>
+
+    <!-- ✅ manual chevron — direction hardcoded per endpoint -->
+    <path d="M 440 52 Q 568 52 568 244" fill="none" stroke="#5e5d59" stroke-width="1.5"/>
+    <path d="M 560 236 L 568 244 L 576 236"
+          fill="none" stroke="#5e5d59" stroke-width="1.5"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    ```
+
+    **Chevron templates** (tip at endpoint, 8px arm length):
+
+    | Direction | Path |
+    |---|---|
+    | Down | `M (x-8) (y-8) L x y L (x+8) (y-8)` |
+    | Left | `M (x+8) (y-8) L x y L (x+8) (y+8)` |
+    | Up | `M (x-8) (y+8) L x y L (x+8) (y+8)` |
+    | Right | `M (x-8) (y-8) L x y L (x-8) (y+8)` |
+
+    This limitation also means the diagram templates use manual chevron paths throughout — do not replace them with `<marker>` references.
+  </Accordion>
+
+  <Accordion title="7. Section text has max-width set incorrectly">
+    **Symptom**: Content in `.manifesto` or `.section-lede` blocks does not span the full page width, leaving a wide gap on one side.
+
+    **Root cause**: A `max-width` is being applied (intentionally or via inheritance) to a content text block that should span the full `.page` container width.
+
+    **Fix**: Ensure `.manifesto` and `.section-lede` — and any other section-level body text — span the full `.page` container width with no `max-width` restriction.
+
+    ```css
+    /* ❌ */
+    .manifesto { max-width: 600px; }
+    .section-lede { max-width: 65ch; }
+
+    /* ✅ */
+    .manifesto { /* no max-width */ }
+    .section-lede { /* no max-width */ }
+    ```
+
+    **Exceptions** — these elements being narrow is intentional and should not be changed:
+    - `.type-sample` — constrained width is part of the specimen display
+    - `.footer .colophon` — narrow colophon is the correct typographic treatment
+  </Accordion>
+</AccordionGroup>
+
+## Using `--check` for CSS violations
+
+The `--check` command scans all templates for CSS rule violations without building any PDFs. It catches three categories of issues:
+
+```bash
+python3 scripts/build.py --check
+```
+
+**What it catches**:
+
+| Rule | What it flags |
+|---|---|
+| `rgba-background` | `rgba()` used directly on `background` or `background-color`, or via a CSS variable that resolves to `rgba()` |
+| `cool-gray` | Hex values from Tailwind, Bootstrap, or standard neutral gray palettes — all violate the warm-undertone invariant |
+| `line-height-too-loose` | Any `line-height` value above 1.55 — the Kami ceiling is 1.55 for body text |
+
+Add `-v` to see every scanned file, including those with zero findings:
+
+```bash
+python3 scripts/build.py --check -v
+```
+
+<Tip>
+Run `--check` before `--verify`. The CSS scan runs in seconds with no build step. Fix rgba and cool-gray violations first, then run `--verify` to confirm page counts and font embedding. This order saves time when iterating.
+</Tip>
+
+## Token drift
+
+The `--sync` command checks whether CSS variables defined in template `:root {}` blocks match the canonical values in `references/tokens.json`.
+
+```bash
+python3 scripts/build.py --sync
+```
+
+`tokens.json` is the single source of truth for Kami's design tokens — colors, spacing, and font definitions. When a template drifts from these values (for example, a color was hand-edited instead of using the variable), `--sync` reports it.
+
+Templates that don't define a token are not flagged — the check only fires when a template defines a token with the wrong value.
+
+Token drift most commonly appears after:
+- Copying a template and editing colors directly in the copy
+- Updating `tokens.json` but forgetting to propagate changes to all templates
+
+Run `--check` (which also calls `--sync` internally) as part of your review before shipping any template change.

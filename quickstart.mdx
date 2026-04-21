@@ -1,80 +1,128 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "Get started with Kami"
+description: "Install the Kami skill, pick a document type, fill a template, and render a verified PDF. Get your first polished document in under ten minutes."
 ---
 
-## Get started in three steps
-
-Get your documentation site running locally and make your first customization.
-
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+By the end of this guide you will have Kami installed in your AI agent, a filled template ready to render, and a verified PDF on disk. The whole process takes under ten minutes for a first document, and subsequent documents require only steps 3 and 4.
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  Kami renders HTML templates to PDF using [WeasyPrint](https://weasyprint.org/). Install it along with `pypdf` before running the build script:
+
+  ```bash
+  pip install weasyprint pypdf --break-system-packages
+  ```
 </Note>
+
+<Steps>
+  <Step title="Install the skill">
+    Add the Kami skill to your AI agent with a single command. Choose the variant that matches your agent:
+
+    <CodeGroup>
+    ```bash Claude Code
+    npx skills add tw93/kami -a claude-code -g -y
+    ```
+
+    ```bash Codex
+    npx skills add tw93/kami -a codex -g -y
+    ```
+
+    ```bash Generic agents
+    npx skills add tw93/kami -a '*' -g -y
+    ```
+    </CodeGroup>
+
+    The generic agents command (`-a '*'`) installs to `~/.agents/`, which is read by opencode, pi, and other tools that follow that convention.
+
+    Once installed, the skill auto-triggers when you describe a document task — no slash command required. You can also trigger it from Claude Desktop by downloading the ZIP from [Releases](https://github.com/tw93/kami/releases) and uploading it under Customize > Skills > "+".
+  </Step>
+
+  <Step title="Pick your document type">
+    Tell your agent what you need in plain language. Kami maps your intent to the right template automatically:
+
+    | You say | Document type | Chinese template | English template |
+    |---|---|---|---|
+    | "one-pager / exec summary / 方案" | One-Pager | `one-pager.html` | `one-pager-en.html` |
+    | "white paper / 白皮书 / technical report" | Long Doc | `long-doc.html` | `long-doc-en.html` |
+    | "formal letter / 推荐信 / memo" | Letter | `letter.html` | `letter-en.html` |
+    | "portfolio / 作品集 / case studies" | Portfolio | `portfolio.html` | `portfolio-en.html` |
+    | "resume / CV / 简历" | Resume | `resume.html` | `resume-en.html` |
+    | "slides / PPT / deck / 演示" | Slides | `slides.py` | `slides-en.py` |
+
+    Templates live in `assets/templates/`. If your intent is ambiguous, the agent asks a one-line clarifying question rather than guessing.
+  </Step>
+
+  <Step title="Fill the template">
+    Copy the matching template into your working directory, then edit only the body content. The CSS must stay untouched.
+
+    ```bash
+    cp assets/templates/one-pager-en.html ./my-document.html
+    ```
+
+    Open the file and replace all `{{placeholder}}` values with your content. The `--verify` command will flag any remaining placeholders before building.
+
+    Key rules while editing:
+    - **Edit body content only** — replace text, metrics, section copy, and dates.
+    - **Never touch the `<style>` block** — all design decisions are already encoded there.
+    - Follow `references/writing.en.md` for section structure: data over adjectives, distinctive phrasing over industry clichés.
+
+    <Info>
+      If you are handing raw material (meeting notes, a brain dump, or a chat transcript) to the agent, it will extract facts, map them to template sections, identify any gaps, and ask you once to fill them before proceeding.
+    </Info>
+  </Step>
+
+  <Step title="Build and verify">
+    Run `build.py` with the `--verify` flag to build the PDF and run all checks in a single pass:
+
+    ```bash
+    python3 scripts/build.py --verify
+    ```
+
+    To verify a single target instead of all templates:
+
+    ```bash
+    python3 scripts/build.py --verify resume-en
+    ```
+
+    The `--verify` command runs these checks in sequence:
+
+    1. **Source file exists** — confirms the template file is present.
+    2. **Placeholder scan** — reports any `{{...}}` values that were not filled.
+    3. **WeasyPrint render** — builds the PDF.
+    4. **Page count check** — warns if the output exceeds the document's page limit (one-pager: 1, letter: 1, resume: 2).
+    5. **Font embedding check** — confirms that the primary font is embedded. Chinese documents expect TsangerJinKai02; English documents expect Newsreader and Inter. Missing fonts trigger a fallback warning.
+
+    A clean run looks like:
+
+    ```
+    ✓ one-pager-en: ok
+    ✓ resume-en: ok
+    ```
+
+    A failing run names the problem directly:
+
+    ```
+    ✗ resume-en: page overflow: 3 pages (limit 2)
+    ✗ one-pager-en: unfilled placeholder(s): {{company_name}}, {{tagline}}
+    ```
+
+    <Tip>
+      Use `--check` (without `--verify`) to scan for CSS rule violations without building any PDFs. This is fast and useful during active editing:
+
+      ```bash
+      python3 scripts/build.py --check
+      ```
+
+      It reports `rgba()` backgrounds, cool-gray hex values, and line-heights above 1.55 — the three most common invariant violations.
+    </Tip>
+  </Step>
+</Steps>
+
+## Trigger phrases
+
+The skill activates automatically when your message matches any of these patterns. You do not need to name "Kami" explicitly.
+
+**English triggers:** "build me a resume", "make a one-pager", "design a slide deck", "turn this into a PDF", "make this presentable", "polish typography", "make a portfolio showcasing my projects"
+
+**Chinese triggers:** 做 PDF、排版、生成报告、一页纸、白皮书、作品集、正式信件、简历、PPT、高质量文档、好看的排版、帮我排版一份白皮书、帮我做一份作品集、生成一份项目方案
+
+When raw content is handed over to be "typeset, designed, or made presentable", the skill also activates and runs the distillation step before filling a template.

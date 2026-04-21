@@ -1,97 +1,86 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Kami: Professional Document Design for AI Agents"
+description: "Kami gives AI agents one visual language — warm parchment, ink-blue accent, serif authority — across six professional document types and two languages."
 ---
 
-## Setting up
+Kami (紙, かみ) is the Japanese word for paper — the quiet surface on which a finished idea finally lands. It is a document design system built for AI agents: one visual language across six document types, so every piece you generate looks like something a person made with care.
 
-Get your documentation site up and running in minutes.
+Warm parchment canvas, ink-blue as the sole accent, serif carries authority, no hard shadows or flashy palettes. Kami is part of a trilogy: [Kaku](https://github.com/tw93/Kaku) writes code, [Waza](https://github.com/tw93/Waza) drills habits, **Kami ships documents**.
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Install Kami for your AI agent and generate your first polished PDF in minutes.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Document Types" icon="file-lines" href="/documents/one-pager">
+    Explore all six templates: one-pagers, long docs, resumes, letters, portfolios, and slides.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Design System" icon="palette" href="/design/overview">
+    Learn the eight design invariants — color, typography, spacing, and components.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Guides" icon="book-open" href="/guides/content-strategy">
+    Writing strategy, diagram primitives, WeasyPrint production tips, and troubleshooting.
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## What Kami produces
 
-Everything you need to create world-class documentation.
+Kami covers six professional document types with full bilingual support (Chinese and English):
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
+<CardGroup cols={3}>
+  <Card title="One-Pager" icon="file" href="/documents/one-pager">
+    Executive summaries and project proposals that land in 30 seconds.
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
+  <Card title="Long Doc" icon="file-lines" href="/documents/long-doc">
+    White papers and annual reports with editorial rhythm.
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
+  <Card title="Resume" icon="id-card" href="/documents/resume">
+    Strictly two-page CV with metric cards and project entries.
   </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
+  <Card title="Letter" icon="envelope" href="/documents/letter">
+    Formal correspondence: recommendations, proposals, notices.
   </Card>
-</Columns>
+  <Card title="Portfolio" icon="images" href="/documents/portfolio">
+    Case-study showcase with per-project spreads.
+  </Card>
+  <Card title="Slides" icon="presentation-screen" href="/documents/slides">
+    Keynote-style PPTX decks with consistent editorial feel.
+  </Card>
+</CardGroup>
 
-## Need inspiration?
+## How to install
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<Steps>
+  <Step title="Add the Kami skill to your AI agent">
+    Run the install command for your agent of choice. No configuration needed — the skill auto-triggers when you describe a document task.
+
+    <CodeGroup>
+    ```bash Claude Code
+    npx skills add tw93/kami -a claude-code -g -y
+    ```
+
+    ```bash Codex
+    npx skills add tw93/kami -a codex -g -y
+    ```
+
+    ```bash Generic agents
+    npx skills add tw93/kami -a '*' -g -y
+    ```
+    </CodeGroup>
+  </Step>
+  <Step title="Describe what you need">
+    Tell your agent what to create — in any language. Kami recognizes document tasks automatically.
+
+    > make a one-pager for my startup / build me a resume / design a slide deck for my talk / turn this into a polished white paper
+  </Step>
+  <Step title="Build and verify">
+    Use the build script to render PDFs and verify page counts, font embedding, and CSS rule compliance.
+
+    ```bash
+    python3 scripts/build.py --verify
+    ```
+  </Step>
+</Steps>
+
+<Note>
+  Kami uses [WeasyPrint](https://weasyprint.org/) to render HTML templates to PDF. Make sure WeasyPrint and pypdf are installed before running `build.py`.
+</Note>

@@ -1,0 +1,188 @@
+---
+title: "Content strategy: writing for professional documents"
+description: "Kami's four writing principles, per-document structure rules, number formatting standards, emphasis rules, and a pre-ship quality checklist."
+---
+
+Good typography without good content is polished mediocrity. Kami's design system — parchment canvas, ink-blue accent, serif hierarchy — earns its credibility only when the words carry equal weight. This guide covers how to write for Kami documents: the four core principles that apply to every document type, per-document structure rules, and the coupling decisions that tie layout to content.
+
+## Four core principles
+
+These principles apply across all six document types. Violating any one of them makes the document weaker regardless of how well-designed it is.
+
+<AccordionGroup>
+  <Accordion title="1. Data over adjectives">
+    Every sentence should survive the follow-up question: "how much, specifically?" If you can't answer, don't write it.
+
+    | | Example |
+    |---|---|
+    | ❌ | "Delivered significant business growth" |
+    | ✅ | Write the specific numbers and deltas |
+
+    Adjectives like "significant", "major", and "impactful" signal that the author hasn't done the work of finding the number. Readers notice. Replace every adjective describing scale with the actual figure.
+  </Accordion>
+
+  <Accordion title="2. Judgment over execution">
+    Junior writers describe what they did. Mid-level writers describe how they did it. Senior writers describe why they made that call and what they predicted correctly.
+
+    | | Example |
+    |---|---|
+    | ❌ | "Led the platform build-out" |
+    | ✅ | Write what judgment you made and how it was proven right |
+
+    Execution is table stakes. Judgment is what differentiates a record of activity from a demonstration of thinking. The reader of a resume, one-pager, or white paper is trying to understand your decision-making model — not your task history.
+  </Accordion>
+
+  <Accordion title="3. Distinctive phrasing over clichés">
+    Industry vocabulary is borrowed from other people's thinking. A line you invented beats a line borrowed from an earnings call — it sounds like a person thinking, not a deck regurgitating.
+
+    | | Example |
+    |---|---|
+    | ❌ | "Embrace the AI era, pioneer digital transformation paradigms" |
+    | ✅ | Say it in your own words, skip the industry vocabulary |
+
+    Jargon to cut on sight: leverage, unlock, embrace, pioneer, synergy, ecosystem, paradigm, empower. If a phrase could appear in any company's annual report, it belongs in none of your documents.
+
+    Distinctive phrasing is memorable. A line specific enough to be yours is specific enough to stick.
+  </Accordion>
+
+  <Accordion title="4. Honest boundaries">
+    Fabricated precision is immediately detectable and destroys credibility faster than vague honesty.
+
+    - If you didn't do it, don't claim it
+    - If you don't know the exact number, don't invent one — write a vague but honest magnitude instead
+    - Attribute collaborators
+
+    A document that accurately represents what you did is more useful than one that overstates and forces the reader to mentally discount everything else on the page.
+  </Accordion>
+</AccordionGroup>
+
+## Per-document strategies
+
+Each document type in Kami has a fixed structure and word count contract. Deviating from structure breaks the reader's scan pattern; exceeding word counts is a page-count risk on length-capped documents.
+
+<Tabs>
+  <Tab title="One-Pager">
+    **Single purpose**: the reader grasps the point in 30 seconds.
+
+    **Structure**:
+    1. Headline (serif display) + one-line subtitle (sans body)
+    2. Metrics — 3–4 cards, numbers first
+    3. Core argument (1–2 paragraphs)
+    4. Key evidence / roadmap (3–5 short bullets)
+    5. Next step / contact (footer)
+
+    **Rules**:
+    - Total: **200–350 words**
+    - All section headlines should work as a standalone outline — reading just the headlines should deliver the gist
+    - Data must fill 30%+ of the body
+    - No opening ceremony ("In recent years, as technology has rapidly evolved…")
+  </Tab>
+
+  <Tab title="Long Document">
+    **Structure**:
+    1. Cover — big title + subtitle + author + date
+    2. Contents (auto-generated or hand-written TOC)
+    3. Executive Summary (≤ 1 page + 3–5 takeaways)
+    4. Body — chapters that each stand alone as an essay
+    5. Appendix / references (if applicable)
+
+    **Rules**:
+    - Every chapter opens with a "claim paragraph" (2–3 sentences summarizing the argument)
+    - After long paragraphs (> 5 lines), intersperse callouts / quotes / figures to relieve eye fatigue
+    - Highlight key data / conclusions with `<span class="hl">`
+    - Use "chapter breaks" (blank page + chapter number) between major sections
+
+    No hard word count — but every chapter should stand alone as an essay.
+  </Tab>
+
+  <Tab title="Letter">
+    **Structure**:
+    1. Letterhead (sender info, top right or centered)
+    2. Date (right-aligned)
+    3. Recipient salutation (left-aligned)
+    4. Body (3–5 paragraphs)
+    5. Sign-off ("Sincerely," / "Best regards,")
+    6. Signature (serif 500)
+    7. Enclosures (if any)
+
+    **Rules**:
+    - Minimal — no decorative elements
+    - Body prefers serif (editorial feel)
+    - Slightly larger type (11–12pt body) — this will be read, not scanned
+    - Paragraph spacing ≥ 10pt
+
+    **Common use cases**: resignation/notice, recommendation letter, formal collaboration proposal, personal statement.
+  </Tab>
+
+  <Tab title="Portfolio">
+    **Structure**:
+    1. Cover (name + one-line positioning + contact)
+    2. About (half-page introduction)
+    3. Per-project 1–2 pages: title + type tag + date range, one-line description, 2–3 hero images, role + challenge + outcome
+    4. Selected works list (additional projects as a short list)
+    5. Contact (return to contact details)
+
+    **Rules**:
+    - Visuals first, text supports
+    - Every project's outcome must be quantifiable
+    - Photos > design mockups > code screenshots
+    - Don't list every tech stack — a mono tag row is enough
+
+    No hard word count, but every project page outcome must contain at least one number.
+  </Tab>
+
+  <Tab title="Resume">
+    The most constrained document type in Kami.
+
+    **Hard constraints**:
+    - Strictly **2 A4 pages**
+    - Every project follows three-part structure: Role / Actions / Impact
+    - 5 core skills, each with at least one brand-color emphasis
+    - Team size, tech stack, and narrative voice must stay consistent throughout
+
+    **Key sections**: header + 4 metric cards, summary (~50 words), timeline (3 steps), 3–5 core projects, public work / impact (optional), 5 core skills, education.
+
+    **Metric card selection rule**:
+    - 1 card on **time** (years, consistency)
+    - 1 card on **scale** (team, users, projects, or other quantifiable scope)
+    - 2 cards on **results** (quantifiable external proof)
+  </Tab>
+</Tabs>
+
+## Number formatting
+
+Consistent number formatting signals editorial discipline. Inconsistency — even across just one document — reads as carelessness.
+
+| ✅ Correct | ❌ Avoid | Reason |
+|---|---|---|
+| `5,000+` | `5000+` | Missing thousands separator |
+| `90%` | `90 %` | Space before percent |
+| `~$10M` | `$9,876,543` | False precision reads as invented |
+| `2026.04` | `April 2026` | When horizontal space is tight |
+| `->` | `→` | Use ASCII arrow, not the Unicode arrow character |
+
+Apply these rules consistently across every number in the document before shipping.
+
+## Emphasis rules
+
+Emphasis in Kami means one thing: `color: var(--brand)`. It does not mean bold.
+
+- Use `color: var(--brand)` alone — do not also add `font-weight: bold`
+- Bold breaks the single-weight design language (all serif weight locked at 500)
+- ≤ 2 emphasized items per line
+- Emphasis must be a **quantifiable number** or a **distinctive phrase** — never an adjective
+
+A healthy emphasis ratio is one per 80–150 words. Too many emphases destroys the focal point; too few leaves the document flat with no scan handles.
+
+## Pre-ship checklist
+
+Run through this before every draft leaves your hands:
+
+- Any jargon like "leverage / unlock / embrace / pioneer"? Cut.
+- Does every paragraph's first sentence stand alone? If not, that paragraph has no claim.
+- Are all numbers verifiable? If asked "where did this come from," can you answer?
+- At least one distinctive phrase (not industry boilerplate)?
+- Every emphasized (brand-colored) span is either a number or a distinctive phrase? If not, remove the emphasis.
+- Paragraph lengths even? No paragraph over 5 lines?
+- Number format consistent (commas, percent signs, arrows)?
+- Page count within the document's constraint (resume 2, one-pager 1, letter 1)?

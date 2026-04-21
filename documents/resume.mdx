@@ -1,0 +1,93 @@
+---
+title: "Resume template: strict two-page professional CV"
+description: "Two-page A4 resume with metric cards, Role/Actions/Impact project entries, and a 5 core skills section. Page overflow is the highest-risk failure mode."
+---
+
+The Kami resume is the most constrained document type in the system. Two A4 pages, strictly — the build script enforces this and will fail if content overflows. What makes it distinctive is the metric card row at the top: four data cards in a serif hierarchy that communicate scale before the reader reaches a single sentence, and the three-part Role / Actions / Impact structure applied uniformly to every project entry.
+
+## Templates
+
+| Language | Template file |
+|---|---|
+| Chinese | `assets/templates/resume.html` |
+| English | `assets/templates/resume-en.html` |
+
+## Hard constraints
+
+- **Strictly 2 A4 pages** — no exceptions; the build script enforces this
+- Every project entry follows the three-part structure: **Role / Actions / Impact**
+- Exactly **5 core skills**, each with at least one ink-blue emphasis
+- Team size, tech stack, and narrative voice must stay consistent throughout
+
+## Key sections
+
+The resume template is divided into seven sections:
+
+1. **Header + 4 metric cards** — name, contact, and four data cards above the fold
+2. **Summary** — approximately 50 words; judgment over execution, no clichés
+3. **Timeline** — 3 steps showing long-range career evolution
+4. **3–5 core projects** — each with Role / Actions / Impact
+5. **Public work / impact** — open source, writing, talks (optional)
+6. **5 core skills** — each with one brand-color emphasis
+7. **Education** — institution, degree, year
+
+## Metric card selection rule
+
+The four metric cards at the top must follow this specific balance:
+
+| Card slot | Type | Examples |
+|---|---|---|
+| Card 1 | **Time** | Years of experience, consistency |
+| Card 2 | **Scale** | Team size, users, projects, quantifiable scope |
+| Card 3 | **Results** | Quantifiable external proof |
+| Card 4 | **Results** | A second quantifiable external proof |
+
+Every metric card value must be verifiable. Do not invent precision: `~$10M` is honest; `$9,876,543` reads as fabricated.
+
+## How to use
+
+<Steps>
+  <Step title="Copy the template">
+    Copy the English or Chinese template into your working directory:
+
+    ```bash
+    cp assets/templates/resume-en.html my-resume-en.html
+    ```
+  </Step>
+  <Step title="Fill metric cards first">
+    Start with the four metric cards. If you cannot find four verifiable numbers, use the gap-check workflow: list what is missing and ask the user once before proceeding.
+  </Step>
+  <Step title="Write project entries">
+    Each project entry uses the three-part structure. Write each part as a short clause, not a sentence fragment or a paragraph:
+
+    - **Role**: your function on the project
+    - **Actions**: the judgment calls you made (not just the execution)
+    - **Impact**: quantifiable outcome
+  </Step>
+  <Step title="Build and verify">
+    Run the full verification pass. The `--verify` flag checks page count, font embedding, and unfilled placeholders in one pass:
+
+    ```bash
+    python3 scripts/build.py --verify resume-en
+    ```
+
+    For the Chinese template:
+
+    ```bash
+    python3 scripts/build.py --verify resume
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+  **2-page overflow is the highest-risk failure mode for the resume template.** Any of these changes can push the resume from 2 pages to 3: a font fallback substitution (fallback fonts have different metrics), a line-height increase, or a font-size increase of even 0.5pt. After every content edit, run `--verify` before treating the document as done. If overflow occurs, shorten project entries before touching any CSS.
+</Warning>
+
+## Page margins
+
+Resume margins are `11mm · 13mm · 11mm · 13mm` (T · R · B · L) — the tightest of the six templates, giving maximum body area for a dense information layout.
+
+## Related
+
+- [One-pager](/documents/one-pager) — when the resume needs a one-page executive pitch companion
+- [Portfolio](/documents/portfolio) — when the resume needs visual project case studies alongside it

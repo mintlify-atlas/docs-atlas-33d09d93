@@ -1,0 +1,78 @@
+---
+title: "Kami: a design system for professional documents"
+description: "Kami is a warm-parchment document design system for AI agents, covering six professional document types with full bilingual Chinese and English support."
+---
+
+Kami (紙, かみ) is the Japanese word for paper: the quiet surface on which a finished idea finally lands. It is a document design system built around one visual language — warm parchment canvas, ink-blue as the sole accent, serif-led hierarchy, tight editorial whitespace — applied consistently across six professional document types. Whether you are generating an executive summary, a formal letter, or a slide deck, every output reads like something a person made with care.
+
+## Why Kami
+
+Most AI-generated documents drift into one of two failure modes: generic corporate gray, or SaaS hype gradients. Neither reads like something designed with intention. The output varies from session to session, and no amount of prompting produces consistent typography, spacing, or color discipline.
+
+Kami solves this by acting as an aesthetic constraint system for printed matter. Rather than leaving visual decisions to the model, Kami encodes them: parchment backgrounds, a single chromatic accent, warm-toned neutrals only, serif weight locked at 500. The agent fills in content; Kami enforces the form.
+
+<Note>
+  Kami is not a UI framework. It targets static, print-ready documents rendered to PDF or PPTX — not web apps or dashboards.
+</Note>
+
+## Six document types
+
+Each document type ships with a Chinese template and an English template. Kami selects the correct variant based on the language you write in.
+
+<CardGroup cols={2}>
+  <Card title="One-Pager" icon="file" href="/documents/one-pager">
+    Single-page executive summaries, project proposals, and exec briefs. Designed to land in 30 seconds.
+  </Card>
+  <Card title="Long Doc" icon="file-lines" href="/documents/long-doc">
+    White papers, annual summaries, and technical reports with editorial chapter rhythm and inline diagram support.
+  </Card>
+  <Card title="Resume" icon="id-card" href="/documents/resume">
+    Strictly two-page CV with metric cards, project entries, and tight typographic density.
+  </Card>
+  <Card title="Letter" icon="envelope" href="/documents/letter">
+    Formal single-page correspondence: recommendation letters, resignation letters, memos, and notices.
+  </Card>
+  <Card title="Portfolio" icon="images" href="/documents/portfolio">
+    Case-study showcase with per-project spreads, outcome metrics, and a cover section.
+  </Card>
+  <Card title="Slides" icon="presentation-screen" href="/documents/slides">
+    Keynote-style PPTX decks generated from Python, with the same warm palette and editorial feel.
+  </Card>
+</CardGroup>
+
+## Bilingual support
+
+Kami ships two complete template sets: one for Chinese documents and one for English documents.
+
+**Chinese** templates use TsangerJinKai02-W04 as the primary serif, paired with Source Han Sans for body and UI text. TsangerJinKai02 is free for personal use; commercial use requires a license from [tsanger.cn](https://tsanger.cn). The fallback chain is Source Han Serif SC → Noto Serif CJK SC → Songti SC → Georgia.
+
+**English** templates use Newsreader as the primary serif for both headlines and body — the same font carries authority throughout the document. Inter handles UI-only elements such as labels, eyebrows, and metadata. Both fonts are open-source (OFL). The fallback chain is Charter → Georgia for serif, Helvetica Neue → system-ui for sans.
+
+<Info>
+  Kami selects the template variant automatically: Chinese input routes to `*.html` templates, English input routes to `*-en.html` templates. When the language is ambiguous, the agent asks a one-line clarifying question rather than guessing.
+</Info>
+
+## Design invariants
+
+Every Kami template is governed by eight non-negotiable rules. No template may deviate from them:
+
+1. Page background is `#f5f4ed` (parchment) — never pure white.
+2. A single chromatic accent: ink-blue `#1B365D` only, no second hue.
+3. All neutral grays carry a warm (yellow-brown) undertone — no cool blue-grays.
+4. English documents use serif for headlines and body; Chinese documents use serif headlines and sans body. Sans is reserved for UI-only elements in both.
+5. Serif weight is locked at 500. Bold serif never appears.
+6. Line-height: headlines 1.1–1.3, dense body 1.4–1.45, reading body 1.5–1.55. Never 1.6 or above.
+7. Tag and badge backgrounds use solid hex values only — `rgba()` triggers a WeasyPrint double-rectangle rendering bug.
+8. Depth is created with ring or whisper shadows only — no hard drop shadows.
+
+The full specification is in `references/design.en.md` inside the repo. The cheatsheet (`CHEATSHEET.en.md`) covers color tokens, type scales, spacing tiers, and common CSS snippets on a single page.
+
+## Part of a trilogy
+
+Kami is the third part of the **Kaku · Waza · Kami** trilogy:
+
+- [**Kaku**](https://github.com/tw93/Kaku) (書く) — writes code
+- [**Waza**](https://github.com/tw93/Waza) (技) — drills habits
+- [**Kami**](https://github.com/tw93/Kami) (紙) — ships documents
+
+Think of them as a family: Kaku is the dad, Waza the big sister, Kami the little sister. Each is independent but they share a philosophy: good tools have a clear aesthetic opinion and enforce it consistently.
